@@ -8,15 +8,18 @@
 
 class Morse
 {
-  int pin;
-  int interval;
+  int pinNumber;
+  int dotSpan;
+  int dashSpan;
+  int betweenSameLettersPause;
+  int betweenLettersPause;
+  int betweenWordsPause;
   public:
-    Morse(int pin, int interval);
+    Morse(int pinNumber, int timeUnit);
     void dot();
     void dash();
     void convertStringToMorseCode(char* word);
-    void convertCharToMorseCode();
-    void convertBinaryToMorseCode();
+    void convertCharToMorseCode(char c);
 };
 
 #endif
