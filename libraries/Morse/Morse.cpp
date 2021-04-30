@@ -1,52 +1,113 @@
 #include "Arduino.h"
 #include "Morse.h"
 
-enum class CharacterBinaryCode
-{
-  // 0 - short, 1 - long
-  a = "01", b = "1000", c = "1010", d = "100", e = "0", f = "0010",
-  g = "110", h = "0000", i = "00", j = "0111", k = "101", l = "0100",
-  m = "11", n = "10", o = "111", p = "0110", q = "1101", r = "010",
-  s = "000", t = "1", u = "001", v = "0001", w = "011", x = "1001",
-  y = "1011", z = "1100", 1 = "01111", 2 = "00111", 3 = "00011", 4 = "00001",
-  5 = "00000", 6 = "10000", 7 = "11000", 8 = "11100", 9 = "11110", 0 = "11111"
-}
+char CharacterBinaryCode[36][6] = {
+	{'a','.','-'},
+	{'b','-','.','.','.'},
+	{'c','-','.','-','.'},
+	{'d','-','.','.'},
+	{'e','.'},
+	{'f','.','.','-','.'},
+	{'g','-','-','.'},
+	{'h','.','.','.','.'},
+	{'i','.','.'},
+	{'j','.','-','-','-'},
+	{'k','-','.','-'},
+	{'l','.','-','.','.'},
+	{'m','-','-'},
+	{'n','-','.'},
+	{'o','-','-','-'},
+	{'p','-','-','-','.'},
+	{'q','-','-','.','-'},
+	{'r','.','-','.'},
+	{'s','.','.','.'},
+	{'t','-'},
+	{'u','.','.','-'},
+	{'v','.','.','.','-'},
+	{'w','.','-','-'},
+	{'x','-','.','.','-'},
+	{'y','-','.','-','-'},
+	{'z','-','-','.','-'},
+	{'1','.','-','-','-','-'},
+	{'2','.','.','-','-','-'},
+	{'3','.','.','.','-','-'},
+	{'4','.','.','.','.','-'},
+	{'5','.','.','.','.','.'},
+	{'6','-','.','.','.','.'},
+	{'7','-','-','.','.','.'},
+	{'8','-','-','-','.','.'},
+	{'9','-','-','-','-','.'},
+	{'0','-','-','-','-','-'},
+};
 
-Morse::Morse(int pinNumber, int timeUnit)
-{
-  pinMode(pinNumber, OUTPUT);
-  pinNumber = pinNumber;
+Morse::Morse(int pin, int timeUnit) {
+  pinMode(pin, OUTPUT);
+  pinNumber = pin;
   dotSpan = timeUnit;
   dashSpan = timeUnit * 3;
-  betweenSameLettersPause = timeUnit;
+  betweenLetterPartsPause = timeUnit;
   betweenLettersPause = timeUnit * 3;
   betweenWordsPause = timeUnit * 7;
 }
 
-void Morse::dot()
-{
+void Morse::dot() {
   digitalWrite(pinNumber, HIGH);
   delay(dotSpan);
   digitalWrite(pinNumber, LOW);
-  delay(betweenLettersPause);
 }
 
-void Morse::dash()
-{
+void Morse::dash() {
   digitalWrite(pinNumber, HIGH);
   delay(dashSpan);
   digitalWrite(pinNumber, LOW);
-  delay(betweenLettersPause);
 }
 
-void Morse::convertStringToMorseCode(char* word)
-{
-  Serial.print("convert function");
-  delay(1000);
+void Morse::convertStringToMorseCode(char* word) {
+  for (char c = *word; c; c=*++word) {
+    convertCharToMorseCode(tolower(c));
+	if (c == ' ') Serial.print(" / ");
+  }
+
+  Serial.print("\n");
+  delay(betweenWordsPause);
 }
 
-void Morse::convertCharToMorseCode(char c)
-{
-  delay(1000);
+void Morse::convertCharToMorseCode(const char c) {
+  if (!validateChar(c)) return;
+
+  Serial.print(c);
+  Serial.print(": ");
+
+  for (int i = 0; i < (sizeof(CharacterBinaryCode) / sizeof(CharacterBinaryCode[0])); i++) {
+    if (CharacterBinaryCode[i][0] != c) continue;
+
+	for (int j = 1; j < sizeof(CharacterBinaryCode[0]); j++)
+	{
+      if (!CharacterBinaryCode[i][j]) {
+		break;
+	  }
+
+	  if (CharacterBinaryCode[i][j] == '.') {
+		Serial.print(".");
+		dot();
+	  }
+
+	  if (CharacterBinaryCode[i][j] == '-') {
+		Serial.print("-");
+		dash();
+	  }
+
+	  delay(betweenLetterPartsPause);
+	}
+
+    Serial.print(" ");
+	delay(betweenLettersPause);
+	break;
+  }
 }
 
+bool Morse::validateChar(const char c) {
+  if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9')) return false;
+
+  return true;
+}

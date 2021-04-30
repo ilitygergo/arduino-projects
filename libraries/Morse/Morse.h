@@ -11,7 +11,7 @@ class Morse
   int pinNumber;
   int dotSpan;
   int dashSpan;
-  int betweenSameLettersPause;
+  int betweenLetterPartsPause;
   int betweenLettersPause;
   int betweenWordsPause;
   public:
@@ -19,7 +19,8 @@ class Morse
     void dot();
     void dash();
     void convertStringToMorseCode(char* word);
-    void convertCharToMorseCode(char c);
+    void convertCharToMorseCode(const char c);
+    bool validateChar(const char c);
 };
 
 #endif

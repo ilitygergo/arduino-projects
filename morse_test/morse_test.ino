@@ -4,10 +4,10 @@ Morse morse(13, 250);
 
 void setup()
 {
+  Serial.begin(9600);
 }
 
 void loop()
 {
-  morse.convertBinaryToMorseCode();
-  delay(3000);
+  morse.convertStringToMorseCode("Hello world");
 }
