@@ -1,3 +1,8 @@
+/*
+ * 2021.04.30.
+ * REQUIREMENTS: 1 LED
+*/
+
 #include <Morse.h>
 
 Morse morse(13, 250);
