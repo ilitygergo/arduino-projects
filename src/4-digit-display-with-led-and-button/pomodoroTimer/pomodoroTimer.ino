@@ -44,31 +44,26 @@ void countdownMinutesUntilButtonPushed(int minutes) {
   int seconds = minutes * 60;
   buttonState = LOW;
 
-  while (buttonState != HIGH && seconds >= 0) {
+  while (buttonState != HIGH) {
     waitSecondsWithDisplayRefresh(1);
     sevseg.setNumber(secondsToHourTime(seconds--), 2);
-  }
 
-  if (seconds < 0) {
-    finishedBuzzingUntilButtonPushed();
-    waitSecondsWithDisplayRefresh(1);
-    return;
+    if (seconds < 0) {
+      finishedBuzzingUntilButtonPushed();
+      return;
+    }
   }
 
   stopBeforeFinish();
 }
 
 void finishedBuzzingUntilButtonPushed() {
-  sevseg.setChars("DONE");
   buttonState = LOW;
-  tone(BUZZER_PIN, 1046);
 
   while (buttonState != HIGH) {
     buttonState = digitalRead(BUTTON_PIN);
-    waitSecondsWithDisplayRefresh(1);
+    blinkingWordWithBuzzerTone("DONE", 1046);
   }
-
-  noTone(BUZZER_PIN);
 }
 
 int secondsToHourTime(int seconds) {
@@ -97,6 +92,18 @@ void waitSecondsWithDisplayRefresh(int seconds) {
 
 void stopBeforeFinish() {
   sevseg.setChars("STOP");
-  waitSecondsWithDisplayRefresh(2);
+  waitSecondsWithDisplayRefresh(1);
   buttonState = LOW;
+}
+
+void blinkingWordWithBuzzerTone(char word[], int toneNumber) {
+  sevseg.setChars(word);
+  tone(BUZZER_PIN, toneNumber);
+
+  waitSecondsWithDisplayRefresh(1);
+
+  noTone(BUZZER_PIN);
+  sevseg.blank();
+
+  waitSecondsWithDisplayRefresh(1);
 }
