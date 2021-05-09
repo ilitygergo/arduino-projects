@@ -1,7 +1,7 @@
 /**
  * 2021.05.01.
  * REQUIREMENTS:
- * - 4 dogot 7 pin display
+ * - 4 digit 7 pin display
  * - button
  * - buzzer
  */
