@@ -9,8 +9,9 @@
 
 #define BUZZER_PIN A1
 #define BUTTON_PIN A0
-#define STUDY_MINUTES 40
+#define STUDY_MINUTES 30
 #define REST_MINUTES 15
+#define REPETITIONS 1
 
 SevSeg sevseg;
 int buttonState;
@@ -36,8 +37,14 @@ void initFourDigitDisplay() {
 }
 
 void loop() {
-  countdownMinutesUntilButtonPushed(STUDY_MINUTES);
-  countdownMinutesUntilButtonPushed(REST_MINUTES);
+  sevseg.setChars("LOOP");
+  waitingLoop();
+  for (int i = 1; i <= REPETITIONS; i++) {
+    sevseg.setNumber(i * 1000 + REPETITIONS, 2);
+    waitSecondsWithDisplayRefresh(1);
+    countdownMinutesUntilButtonPushed(STUDY_MINUTES);
+    countdownMinutesUntilButtonPushed(REST_MINUTES);
+  }
 }
 
 void countdownMinutesUntilButtonPushed(int minutes) {
@@ -55,6 +62,15 @@ void countdownMinutesUntilButtonPushed(int minutes) {
   }
 
   stopBeforeFinish();
+}
+
+void waitingLoop() {
+  buttonState = LOW;
+
+  while (buttonState != HIGH) {
+    buttonState = digitalRead(BUTTON_PIN);
+    sevseg.refreshDisplay();
+  }
 }
 
 void finishedBuzzingUntilButtonPushed() {
