@@ -8,6 +8,9 @@ It helps setting up the basics for the hardware components.
 https://www.youtube.com/watch?v=6rmErwU5E-k
 
 
+### Cheap Arduino Nano
+https://www.hestore.hu/prod_10042272.html#
+
 ### Atmega328 standalone
 
 If you want to use only the chip, you'll need to:
